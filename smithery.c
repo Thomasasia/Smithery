@@ -22,7 +22,7 @@ static float variation;
 //      dificulty impacts how hard it is to make weapons with this material. at smithingSkill = difficulty there is no penalty, otherwise it increases the chances of a negative result.
 static struct { char name[21]; float cost; float valueMod; int difficulty;} material[6];
 static int currentMaterialIndex;
-
+int materialCount = 0;
 
 
 static int smithingSkill;
@@ -55,12 +55,20 @@ float genRandFloat(float min, float max){
 }
 
 //adds a tuple to the tuples, and fills it with values
-static void addTuple(char *str, float val) {
+static void addWeaponTuple(char *str, float val) {
     printf("Adding '%s', mapped to %f\n", str, val);
     printf("Weapon count = %d\n", weaponCount+1);
     strcpy(weapon[weaponCount].name, str);
     weapon[weaponCount].index = weaponCount;
     weapon[weaponCount++].value = val;
+}
+
+static void addMaterialTuple(char *str, float cost, float mod, int difficulty){
+    strcpy(material[materialCount].name, str);
+    material[materialCount].cost = cost;
+    material[materialCount].valueMod = mod;
+    material[materialCount++].difficulty = difficulty;
+
 }
 
 // Lists weapons for debug. Thanks stack overflow!
@@ -71,25 +79,41 @@ static void listWeaponTypes(void) {
     puts("==========");
 }
 
+static void listMaterials(void) {
+    printf("==========\nTuple count is %d\n", materialCount);
+    for (int i = 0; i < materialCount; ++i)
+        printf("   [%s] -> cost:%f, mod: %f, dif: %i\n", material[i].name, material[i].cost, material[i].valueMod, material[i].difficulty);
+    puts("==========");
+}
+
 // Populates the tuple array for the weapons
 void configWeapons(void){
-    addTuple("axe", 8.0);
-    addTuple("poleaxe",14.0);
-    addTuple("short Sword",12.0);
-    addTuple("long Sword",15.0);
-    addTuple("zweihander",20.0);
-    addTuple("dagger",6.0);
-    addTuple("knife",4.0);
-    addTuple("spear",8.0);
-    addTuple("pike",10.0);
-    addTuple("halberd",15.0);
-    addTuple("morning star", 14.0);
-    addTuple("ball-and-chain",14.0);
-    addTuple("warhammer",13.0);
-    addTuple("maul",15.0);
-    addTuple("war mattock",18.0);
-    addTuple("scourge",12.0);
+    addWeaponTuple("axe", 8.0);
+    addWeaponTuple("poleaxe",14.0);
+    addWeaponTuple("short Sword",12.0);
+    addWeaponTuple("long Sword",15.0);
+    addWeaponTuple("zweihander",20.0);
+    addWeaponTuple("dagger",6.0);
+    addWeaponTuple("knife",4.0);
+    addWeaponTuple("spear",8.0);
+    addWeaponTuple("pike",10.0);
+    addWeaponTuple("halberd",15.0);
+    addWeaponTuple("morning star", 14.0);
+    addWeaponTuple("ball-and-chain",14.0);
+    addWeaponTuple("warhammer",13.0);
+    addWeaponTuple("maul",15.0);
+    addWeaponTuple("war mattock",18.0);
+    addWeaponTuple("scourge",12.0);
+}
 
+//TODO:add the materials
+void configMaterials(void){
+        addMaterialTuple("Iron", 0.5, 0.0, 1);
+        addMaterialTuple("Steel", 0.75, 0.2, 10);
+        addMaterialTuple("Platinum", 1.5, 0.75, 25);
+        addMaterialTuple("Mythril", 3.0, 3.0, 40);
+        addMaterialTuple("Adamantium", 6.0, 8.0, 70);
+        addMaterialTuple("Demonite", 15.0, 30.0, 100);
 }
 
 //Gives you a Y/N prompt and returns 0 for N or 1 for Y
@@ -147,9 +171,9 @@ int main(void){
     srand(time(0));
     // sets up the weapons' configurations
     configWeapons();
+    configMaterials();
 
-    listWeaponTypes();
-
+    listMaterials();
     //initiates starting resources & skills
     double money = 100.0;
     int smithingSkill = 1;
