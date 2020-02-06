@@ -12,17 +12,19 @@ int weaponCount = 0;
 static int currentWeaponIndex;
 static float currentWeaponCost;
 
-// For random integer generation
+// Generates a random int between the values of lower and upper
 int genRandInt(int lower, int upper){
     int num = (rand() % (upper - lower + 1)) + lower; 
     return num;
 }
 
+// Generates a random float between the values of lower and upper
 float genRandFloat(float min, float max){
     float range = (max - min);
     double div = RAND_MAX / range;
     return min + (rand() / div);
 }
+
 //adds a tuple to the tuples, and fills it with values
 static void addTuple(char *str, float val) {
     printf("Adding '%s', mapped to %f\n", str, val);
@@ -61,21 +63,50 @@ void configWeapons(void){
 
 }
 
+//Gives you a Y/N prompt and returns 0 for N or 1 for Y
+int ynQuestion(char text[50]){
+    printf("%s \0", text);
+    char answer;
+    scanf(" %c",&answer);
+
+    //makes sure that the response was eiter upper or lower case N or Y
+    while(1){
+        if(answer == 'y' || answer == 'Y') return 1;
+        else if(answer == 'n' || answer == 'N') return 0;
+        else printf("Please enter Y or N!   \0");
+        scanf(" %c",&answer);
+    }
+    return 0;
+}
+
 // This is what happens when a customer arrives.
-void customer(void){
+int customer(void){
+    printf("Here comes a customer!\n");
     // Randomly selects a weapon
     currentWeaponIndex = genRandInt(0,15);
     // Varies the value by up to 20% of the value of the weapon
     float variation = 0.2 * weapon[currentWeaponIndex].value;
-    printf("I want a %s and I will pay you $%f\n", weapon[currentWeaponIndex].name, weapon[currentWeaponIndex].value + variation);
+    printf("\"I want a %s and I will pay you $%f\"\n", weapon[currentWeaponIndex].name, weapon[currentWeaponIndex].value + variation);
+    int accept = ynQuestion("Do you accept? (Y/N): ");
+    // if you reject him he leaves
+    if(!accept){
+        printf("\"Fine then!\"\n");
+        printf("The Customer leaves\n");
+    }
+    else{
+        printf("\"Excellent!\"");
+    }
+    return 0;
 }
-int main(){
-    printf("Here comes the first customer!\n");
+int main(void){
     srand(time(0));
     configWeapons();
     listWeaponTypes();
     double money = 100.0;
     printf("Starting money: %lf\n",money);
-    customer();
+    while(1){
+        int customerAccepted = customer();
+        if(!customedAccepted) pass;
+    }
     return 0;
 }
