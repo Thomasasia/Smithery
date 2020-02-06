@@ -11,6 +11,7 @@ static struct { char name[21]; float value; int index;} weapon[16];
 int weaponCount = 0;
 static int currentWeaponIndex;
 static float currentWeaponCost;
+static char currentWeaponName[21];
 
 // Generates a random int between the values of lower and upper
 int genRandInt(int lower, int upper){
@@ -85,8 +86,13 @@ int customer(void){
     // Randomly selects a weapon
     currentWeaponIndex = genRandInt(0,15);
     // Varies the value by up to 20% of the value of the weapon
-    float variation = 0.2 * weapon[currentWeaponIndex].value;
-    printf("\"I want a %s and I will pay you $%f\"\n", weapon[currentWeaponIndex].name, weapon[currentWeaponIndex].value + variation);
+    float variation = genRandFloat(-0.2,0.2) * weapon[currentWeaponIndex].value;
+
+    //sets the globals to the new weapon
+    currentWeaponCost = weapon[currentWeaponIndex].value + variation;
+    strcpy(currentWeaponName, weapon[currentWeaponIndex].name);
+
+    printf("\"I want a %s and I will pay you $%f.\"\n", currentWeaponName, currentWeaponCost);
     int accept = ynQuestion("Do you accept? (Y/N): ");
     // if you reject him he leaves
     if(!accept){
@@ -94,7 +100,7 @@ int customer(void){
         printf("The Customer leaves\n");
     }
     else{
-        printf("\"Excellent!\"");
+        printf("\"Excellent!\"\n");
     }
     return 0;
 }
@@ -106,7 +112,10 @@ int main(void){
     printf("Starting money: %lf\n",money);
     while(1){
         int customerAccepted = customer();
-        if(!customedAccepted) pass;
+        //if the customer was rejected, restart the loop
+        if(!customerAccepted) continue;
+
+
     }
     return 0;
 }
