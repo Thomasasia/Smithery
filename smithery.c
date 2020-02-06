@@ -11,6 +11,7 @@ static struct { char name[21]; float value; int index;} weapon[16];
 int weaponCount = 0;
 static int currentWeaponIndex;
 static float currentWeaponCost;
+
 // For random integer generation
 int genRandInt(int lower, int upper){
     int num = (rand() % (upper - lower + 1)) + lower; 
@@ -25,7 +26,7 @@ float genRandFloat(float min, float max){
 //adds a tuple to the tuples, and fills it with values
 static void addTuple(char *str, float val) {
     printf("Adding '%s', mapped to %f\n", str, val);
-    printf("Weapon count = %d\n", weaponCount);
+    printf("Weapon count = %d\n", weaponCount+1);
     strcpy(weapon[weaponCount].name, str);
     weapon[weaponCount].index = weaponCount;
     weapon[weaponCount++].value = val;
@@ -40,7 +41,7 @@ static void listWeaponTypes(void) {
 }
 
 // Populates the tuple array for the weapons
-void configWeapons(){
+void configWeapons(void){
     addTuple("axe", 8.0);
     addTuple("poleaxe",14.0);
     addTuple("short Sword",12.0);
@@ -62,7 +63,6 @@ void configWeapons(){
 
 // This is what happens when a customer arrives.
 void customer(void){
-    printf("Here comes the first customer!\n");
     // Randomly selects a weapon
     currentWeaponIndex = genRandInt(0,15);
     // Varies the value by up to 20% of the value of the weapon
@@ -70,6 +70,7 @@ void customer(void){
     printf("I want a %s and I will pay you $%f\n", weapon[currentWeaponIndex].name, weapon[currentWeaponIndex].value + variation);
 }
 int main(){
+    printf("Here comes the first customer!\n");
     srand(time(0));
     configWeapons();
     listWeaponTypes();
