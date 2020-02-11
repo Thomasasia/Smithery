@@ -198,6 +198,13 @@ int chooseMaterial(void){
     return index -1;
 }
 
+//TODO: create crafting logic, mechanics, etc
+int craftWeapon(){
+
+
+    return 0;
+}
+
 int main(void){
     // sets up random generator
     srand(time(0));
@@ -216,7 +223,16 @@ int main(void){
         //if the customer was rejected, restart the loop
         if(!customerAccepted) continue;
         chosenMaterial = chooseMaterial();
+        craftWeapon();
 
+        printf("You pay your living expenses. -$10\n");
+        money -= 10.0;
+        if(money < 0){
+            printf("You are all out of money!\n");
+            break;
+        }
     }
+    //TODO: make the game over thing cool ascii letters
+    printf("G A M E   O V E R");
     return 0;
 }
