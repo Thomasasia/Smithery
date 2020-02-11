@@ -56,8 +56,8 @@ float genRandFloat(float min, float max){
 
 //adds a tuple to the tuples, and fills it with values
 static void addWeaponTuple(char *str, float val) {
-    printf("Adding '%s', mapped to %f\n", str, val);
-    printf("Weapon count = %d\n", weaponCount+1);
+//    printf("Adding '%s', mapped to %f\n", str, val);
+//    printf("Weapon count = %d\n", weaponCount+1);
     strcpy(weapon[weaponCount].name, str);
     weapon[weaponCount].index = weaponCount;
     weapon[weaponCount++].value = val;
@@ -80,9 +80,13 @@ static void listWeaponTypes(void) {
 }
 
 static void listMaterials(void) {
-    printf("==========\nTuple count is %d\n", materialCount);
-    for (int i = 0; i < materialCount; ++i)
-        printf("   [%s] -> cost:%f, mod: %f, dif: %i\n", material[i].name, material[i].cost, material[i].valueMod, material[i].difficulty);
+    printf("==========\nThere are %d materials\n", materialCount);
+    for (int i = 0; i < materialCount; ++i){
+        printf("   (%i)%s:\n", i,material[i].name);
+        printf("\tCost Modifier: %f\t", material[i].cost);
+        printf("   Value Modifier: %f", material[i].valueMod);
+        printf("    Material Difficulty: %i\n", material[i].difficulty);
+    }
     puts("==========");
 }
 
@@ -106,14 +110,13 @@ void configWeapons(void){
     addWeaponTuple("scourge",12.0);
 }
 
-//TODO:add the materials
 void configMaterials(void){
-        addMaterialTuple("Iron", 0.5, 0.0, 1);
-        addMaterialTuple("Steel", 0.75, 0.2, 10);
-        addMaterialTuple("Platinum", 1.5, 0.75, 25);
-        addMaterialTuple("Mythril", 3.0, 3.0, 40);
-        addMaterialTuple("Adamantium", 6.0, 8.0, 70);
-        addMaterialTuple("Demonite", 15.0, 30.0, 100);
+    addMaterialTuple("Iron", 0.5, 0.0, 1);
+    addMaterialTuple("Steel", 0.75, 0.2, 10);
+    addMaterialTuple("Platinum", 1.5, 0.75, 25);
+    addMaterialTuple("Mythril", 3.0, 3.0, 40);
+    addMaterialTuple("Adamantium", 6.0, 8.0, 70);
+    addMaterialTuple("Demonite", 15.0, 30.0, 100);
 }
 
 //Gives you a Y/N prompt and returns 0 for N or 1 for Y
@@ -151,15 +154,18 @@ int customer(void){
     if(!accept){
         printf("\"Fine then!\"\n");
         printf("The Customer leaves\n");
+        return 0;
     }
     else{
         printf("\"Excellent!\"\n");
+        return 1;
     }
     return 0;
 }
 
 void chooseMaterial(void){
     printf("What material will you make the %s out of?\n", currentWeaponName);
+    listMaterials();
 
 
 
@@ -173,7 +179,6 @@ int main(void){
     configWeapons();
     configMaterials();
 
-    listMaterials();
     //initiates starting resources & skills
     double money = 100.0;
     int smithingSkill = 1;
