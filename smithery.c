@@ -83,7 +83,7 @@ static void listMaterials(void) {
     printf("==========\nThere are %d materials\n", materialCount);
     for (int i = 0; i < materialCount; ++i){
         printf("   (%i)%s:\n", i,material[i].name);
-        printf("\tCost Modifier: %f\t", material[i].cost);
+        printf("\tCreation Cost: %f\t", material[i].cost);
         printf("   Value Modifier: %f", material[i].valueMod);
         printf("    Material Difficulty: %i\n", material[i].difficulty);
     }
@@ -117,6 +117,23 @@ void configMaterials(void){
     addMaterialTuple("Mythril", 3.0, 3.0, 40);
     addMaterialTuple("Adamantium", 6.0, 8.0, 70);
     addMaterialTuple("Demonite", 15.0, 30.0, 100);
+}
+
+int getIntInput(void){
+    int myInt;
+    int result = scanf("%d", &myInt);
+    
+    if (result == EOF) {
+        /* ... you're not going to get any input ... */
+    }
+    if (result == 0) {
+        while (fgetc(stdin) != '\n');
+    }
+    return myInt;
+
+
+
+
 }
 
 //Gives you a Y/N prompt and returns 0 for N or 1 for Y
@@ -163,13 +180,22 @@ int customer(void){
     return 0;
 }
 
-void chooseMaterial(void){
+//This function is used to get input from the player as to which material they will use.
+int chooseMaterial(void){
     printf("What material will you make the %s out of?\n", currentWeaponName);
     listMaterials();
+    int index = 0;
+    while(index == 0){
+        printf("Enter that material's index: ");
+        index = getIntInput();
+        printf("\n");
 
-
-
-
+        // if the input is out of bounds or invalid, it's set to 0 and the loop continues, and a message is displayed.
+        if(index <= 0 || index > materialCount) index = 0;
+        if(index == 0)
+            printf("Please enter a valid input.\n");
+    }
+    return index -1;
 }
 
 int main(void){
@@ -189,7 +215,7 @@ int main(void){
         int customerAccepted = customer();
         //if the customer was rejected, restart the loop
         if(!customerAccepted) continue;
-        chooseMaterial();
+        chosenMaterial = chooseMaterial();
 
     }
     return 0;
