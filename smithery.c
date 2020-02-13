@@ -33,10 +33,11 @@ int materialCount = 0;
 static int smithingSkill;
 
 // this is because im sick of the input messing me up
-void flushInput(void){
+// without this, the program might not always wait for input.
+int flushInput(void){
     int c;
     while ((c = getchar()) != '\n' && c != EOF);
-
+    return 0;
 }
 
 // Generates a random int between the values of lower and upper
@@ -92,6 +93,7 @@ static void listWeaponTypes(void) {
 }
 
 static void listMaterials(void) {
+    //TODO: Fix the last line of output.
     printf("==========\nThere are %d materials\n", materialCount);
     for (int i = 0; i < materialCount; ++i){
         printf("   (%i)%s:\n", i+1,material[i].name);
@@ -189,11 +191,21 @@ int customer(void){
         printf("\"Excellent!\"\n");
         return 1;
     }
-    return 0;
+    return 0;;
+}
+
+
+double customerPayment(double weaponValue){
+    // TODO: add flavor text based on the quality of the weapon.
+    payment =  (variation+1) * weaponValue;
+    printf("\"Ah, thank you good Sir! I cannot wait to try out this new %s! Here is %lf for the weapon, plus the %f I promised, leading to a grand total of %lf!\"\n", currentWeaponName, weaponValue, variation, payment);
+    return payment;
+
 }
 
 //This function is used to get input from the player as to which material they will use.
 int chooseMaterial(void){
+    //TODO: Make it so that the player can cancel
     printf("What material will you make the %s out of?\n", currentWeaponName);
     listMaterials();
     int index = 0;
@@ -204,6 +216,12 @@ int chooseMaterial(void){
 
         // if the input is out of bounds or invalid, it's set to 0 and the loop continues, and a message is displayed.
         if(index <= 0 || index > materialCount) index = 0;
+        // if the material is to expensive, it's set to 0 and the loop continues
+        double price = (material[index-1].cost + 1) * currentWeaponCost;
+        if( price > playerMoney){
+            index = 0;
+            printf("Not enough money! That would cost %lf, but you only have %lf.\n", price, playerMoney);
+        }
         if(index == 0)
             printf("Please enter a valid input.\n");
     }
@@ -286,14 +304,23 @@ int main(void){
         currentMaterialIndex = chooseMaterial();
         double weaponValue;
         weaponValue = craftWeapon();
+        double payment = customerPayment(weaponValue);
+        playerMoney += payment;
+        
 
+        flushInput();
+        getchar();
 
         printf("You pay your living expenses. -$10\n");
         playerMoney -= 10.0;
-        if(playerMoney < 0){
+        if(playerMoney <= 0){
             printf("You are all out of money!\n");
             break;
         }
+        flushInput();
+        getchar();
+        printf("Player money: %lf\n", playerMoney);
+        printf("Smithing skill: %i\n", smithingSkill);
     }
     //TODO: make the game over thing cool ascii letters
     printf("G A M E   O V E R\n");
