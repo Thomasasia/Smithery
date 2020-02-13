@@ -233,11 +233,11 @@ double craftWeapon(){
 
     //The price of the weapon is calculated and deducted from you money
     float cost = currentWeaponCost * material[currentMaterialIndex].cost;
-    printf("The materials cost you a total of %f\n",cost);
+    printf("The materials cost you a total of $%f\n",cost);
 
     playerMoney -= cost;
 
-    printf("You now have %lf\n",playerMoney);
+    printf("You now have $%lf\n",playerMoney);
 
 
     //TODO: Add pokemon style ...
@@ -245,6 +245,8 @@ double craftWeapon(){
     int difficulty = material[currentMaterialIndex].difficulty + genRandInt(-1,1);
     //can't have negative difficulty!
     if(difficulty <= 0) difficulty = 1;
+    //max level is 100
+    else if(difficulty > 100) difficulty = 100;
     
     printf("Crafting difficulty level: %i\n",difficulty);
     printf("Crafting skill level: %i\n", smithingSkill);
@@ -270,11 +272,30 @@ double craftWeapon(){
     //max mod is 2
     if(dif > 2) dif = 2;
 
-    //TODO: Add flavor text for how well you did
+    //flavor text
+    if(dif <= 1.1 && dif >= 0.9) printf("You make a decent %s.\n", currentWeaponName);
+    else if(dif > 1){ //positive cases
+       if(dif >= 1.1 && dif <= 1.4) printf("You make a good %s.\n", currentWeaponName);
+       else if(dif > 1.4 && dif <= 1.7) printf("You make an excellent %s!\n", currentWeaponName);
+       else if(dif > 1.7 && dif < 1.9) printf("You make a masterful %s!\n", currentWeaponName);
+       else if(dif >= 1.9 && dif <2) printf("You make an artifact %s!!\n", currentWeaponName);
+       else if(dif == 2) printf("You make a Supreme Legendary Artifact %s!!!\n", currentWeaponName);
+       //TODO : Name generator for max quality weapons??
+    }
+    else{ // negative cases
+        if(dif < 0.9 && dif >= 0.6) printf("You make a poor %s.\n", currentWeaponName);
+        else if (dif < 0.6 && dif >= 0.4) printf("You make a shoddy %s.\n", currentWeaponName);
+        else if (dif < 0.4 && dif > 0.2) printf("You make an awful %s!.\n", currentWeaponName);
+        else if (dif <= 0.2 && dif >= 0.1) printf("You make a completely useless and utterly worthless %s!!.\n", currentWeaponName);
+        else if (dif < 0.1) printf("You make such an increadably useless %s, that simply by looking at it you feel inept at just about everything.\nFlowers die around it, babies cry when they see it, and priests forbit it from their temples. You should be ashamed.\n", currentWeaponName);
+
+
+    }
+
     //printf("weap cost: %f\ndif: %lf\nvalueMod: %f\n",currentWeaponCost,dif,material[currentMaterialIndex].valueMod);
     double value = currentWeaponCost * dif * (1 + material[currentMaterialIndex].valueMod);
 
-    printf("You crafted a weapon worth %lf!\n", value);
+    printf("The weapon is worth %lf!\n", value);
     printf("        (The base value of the weapon is %f.)\n", currentWeaponCost);
 
     getchar();
@@ -292,6 +313,7 @@ int calculateExperience(double exp){
     double rawLevel = (20 + sqrt(400 + 4*20*smithingXP))/40;
 
     int newLevel = (int) rawLevel;
+    if (newLevel > 100) newLevel = 100;
     if(newLevel > smithingSkill){
         printf("Level Up!!\n");
         printf("New Level: %i\n", newLevel);
@@ -312,7 +334,7 @@ int main(void){
     playerMoney = 100.0;
     smithingSkill = 1;
 
-    printf("Starting money: %lf\n", playerMoney);
+    printf("Starting money: $%lf\n", playerMoney);
     printf("Smithing skill: %i\n", smithingSkill);
     while(1){
         int customerAccepted = customer();
@@ -340,7 +362,7 @@ int main(void){
         }
         flushInput();
         getchar();
-        printf("Player money: %lf\n", playerMoney);
+        printf("Player money: $%lf\n", playerMoney);
         printf("Smithing skill: %i\n", smithingSkill);
     }
     // This is the game over screen.
