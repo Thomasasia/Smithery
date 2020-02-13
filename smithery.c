@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
@@ -225,6 +226,11 @@ double craftWeapon(){
     //Probability curves are fun.
     int smithRoll = 0.0;
     int difficultyRoll = 0.0;
+    
+    printf("Crafting...\n");
+    //TODO: Fix getchars
+    getchar();
+
 
     //Each level is a d20 rolled. The percentage difference determines the quality modifier.
     for(int i = 0; i < smithingSkill; i++){
@@ -270,7 +276,9 @@ int main(void){
         //if the customer was rejected, restart the loop
         if(!customerAccepted) continue;
         currentMaterialIndex = chooseMaterial();
-        craftWeapon();
+        double weaponValue;
+        weaponValue = craftWeapon();
+
 
         printf("You pay your living expenses. -$10\n");
         playerMoney -= 10.0;
