@@ -13,6 +13,7 @@ static int currentWeaponIndex;
 static float currentWeaponCost;
 static char currentWeaponName[21];
 static float variation;
+static double dif;
 
 static double playerMoney;
 
@@ -267,7 +268,7 @@ double craftWeapon(){
         difficultyRoll += genRandInt(1,20);
     }
     printf("You roll a %i out of a needed %i.\n", smithRoll, difficultyRoll);
-    double dif = (double) smithRoll / difficultyRoll;
+    dif = (double) smithRoll / difficultyRoll;
 
     //max mod is 2
     if(dif > 2) dif = 2;
@@ -278,8 +279,8 @@ double craftWeapon(){
        if(dif >= 1.1 && dif <= 1.4) printf("You make a good %s.\n", currentWeaponName);
        else if(dif > 1.4 && dif <= 1.7) printf("You make an excellent %s!\n", currentWeaponName);
        else if(dif > 1.7 && dif < 1.9) printf("You make a masterful %s!\n", currentWeaponName);
-       else if(dif >= 1.9 && dif <2) printf("You make an artifact %s!!\n", currentWeaponName);
-       else if(dif == 2) printf("You make a Supreme Legendary Artifact %s!!!\n", currentWeaponName);
+       else if((dif >= 1.9 && dif <2) || (dif == 2 && difficulty < 15)) printf("You make an artifact %s!!\n", currentWeaponName);
+       else if(dif == 2 && difficulty >= 15) printf("You make a Supreme Legendary Artifact %s!!!\n", currentWeaponName);
        //TODO : Name generator for max quality weapons??
     }
     else{ // negative cases
@@ -307,7 +308,7 @@ int calculateExperience(double exp){
     // For now the equation I shall use will be 20x - 20 per level
     // The raw level may be calculated via calculus. The antiderivitive of the function above gives the level.
     // This equation is 20x^2-20x - exp = level
-    smithingXP += exp;
+    smithingXP += (exp * (double)((material[currentMaterialIndex].difficulty/20)+1) * dif);
 
     // Using the above equation and the quadratic formula, we get the level
     double rawLevel = (20 + sqrt(400 + 4*20*smithingXP))/40;
