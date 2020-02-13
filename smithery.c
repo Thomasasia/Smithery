@@ -14,6 +14,10 @@ static float currentWeaponCost;
 static char currentWeaponName[21];
 static float variation;
 
+static double playerMoney;
+
+static int smithingSkill;
+
 
 // Sets up the materials to be used
 //      Name is the material name. Ex Iron
@@ -82,7 +86,7 @@ static void listWeaponTypes(void) {
 static void listMaterials(void) {
     printf("==========\nThere are %d materials\n", materialCount);
     for (int i = 0; i < materialCount; ++i){
-        printf("   (%i)%s:\n", i,material[i].name);
+        printf("   (%i)%s:\n", i+1,material[i].name);
         printf("\tCreation Cost: %f\t", material[i].cost);
         printf("   Value Modifier: %f", material[i].valueMod);
         printf("    Material Difficulty: %i\n", material[i].difficulty);
@@ -198,11 +202,54 @@ int chooseMaterial(void){
     return index -1;
 }
 
-//TODO: create crafting logic, mechanics, etc
-int craftWeapon(){
+//TODO: deduct cost of weapon. Make player rechoose material if they don't have enough cash.
+double craftWeapon(){
+    printf("Time to craft the %s!\n",currentWeaponName);
+
+    //The price of the weapon is calculated and deducted from you money
+    float cost = currentWeaponCost * material[currentMaterialIndex].cost;
+    printf("The materials cost you a total of %f\n",cost);
+
+    playerMoney -= cost;
+
+    printf("You now have %lf\n",playerMoney);
 
 
-    return 0;
+    //TODO: Add pokemon style ...
+    //determines the difficulty to craft the weapon, with a small ammount of variation.
+    int difficulty = material[currentMaterialIndex].difficulty + genRandInt(-1,1);
+    //can't have negative difficulty!
+    if(difficulty <= 0) difficulty = 1;
+    
+    printf("Difficulty level: %i\n",difficulty);
+    //Probability curves are fun.
+    int smithRoll = 0.0;
+    int difficultyRoll = 0.0;
+
+    //Each level is a d20 rolled. The percentage difference determines the quality modifier.
+    for(int i = 0; i < smithingSkill; i++){
+        smithRoll += genRandInt(1,20);
+        printf("s roll now: %i\n",smithRoll);
+    }
+    for(int i = 0; i < difficulty; i++){
+        difficultyRoll += genRandInt(1,20);
+        printf("d roll now: %i\n",difficultyRoll);
+    }
+    printf("You roll a %i out of a needed %i.\n", smithRoll, difficultyRoll);
+    double dif = (double) smithRoll / difficultyRoll;
+
+    //max mod is 2
+    if(dif > 2) dif = 2;
+
+    //TODO: Add flavor text for how well you did
+    printf("weap cost: %f\ndif: %lf\nvalueMod: %f\n",currentWeaponCost,dif,material[currentMaterialIndex].valueMod);
+    double value = currentWeaponCost * dif * (1 + material[currentMaterialIndex].valueMod);
+
+    printf("You crafted a weapon worth %lf!\n", value);
+    printf("        (The base value of the weapon is %f.)\n", currentWeaponCost);
+    getchar();
+
+    return value;
 }
 
 int main(void){
@@ -213,21 +260,21 @@ int main(void){
     configMaterials();
 
     //initiates starting resources & skills
-    double money = 100.0;
-    int smithingSkill = 1;
+    playerMoney = 100.0;
+    smithingSkill = 1;
 
-    printf("Starting money: %lf\n", money);
+    printf("Starting money: %lf\n", playerMoney);
     printf("Smithing skill: %i\n", smithingSkill);
     while(1){
         int customerAccepted = customer();
         //if the customer was rejected, restart the loop
         if(!customerAccepted) continue;
-        chosenMaterial = chooseMaterial();
+        currentMaterialIndex = chooseMaterial();
         craftWeapon();
 
         printf("You pay your living expenses. -$10\n");
-        money -= 10.0;
-        if(money < 0){
+        playerMoney -= 10.0;
+        if(playerMoney < 0){
             printf("You are all out of money!\n");
             break;
         }
