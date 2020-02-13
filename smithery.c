@@ -1,9 +1,8 @@
 #include <stdio.h>
-#include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
-
+#include <math.h>
 // Sets up the random number generator with the clock as a seed
 //srand(time(NULL));
 // tuple struct to hold weapon data
@@ -285,9 +284,22 @@ double craftWeapon(){
 }
 
 int calculateExperience(double exp){
-    
+    // For now the equation I shall use will be 20x - 20 per level
+    // The raw level may be calculated via calculus. The antiderivitive of the function above gives the level.
+    // This equation is 20x^2-20x - exp = level
+    smithingXP += exp;
 
+    // Using the above equation and the quadratic formula, we get the level
+    double rawLevel = (20 + sqrt(400 + 4*20*smithingXP))/40;
 
+    int newLevel = (int) rawLevel;
+    if(newLevel > smithingSkill){
+        printf("Level Up!!\n");
+        printf("New Level: %i\n", newLevel);
+        smithingSkill = newLevel;
+    }
+    printf("Progress to next level: %f\%\n",(rawLevel - newLevel)*100);
+    return 0;
 }
 
 int main(void){
