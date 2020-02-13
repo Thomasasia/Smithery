@@ -205,16 +205,16 @@ double customerPayment(double weaponValue){
 
 //This function is used to get input from the player as to which material they will use.
 int chooseMaterial(void){
-    //TODO: Make it so that the player can cancel
     printf("What material will you make the %s out of?\n", currentWeaponName);
     listMaterials();
     int index = 0;
     while(index == 0){
-        printf("Enter that material's index: ");
+        printf("Enter that material's index(666 to cancel): ");
         index = getIntInput();
         printf("\n");
 
         // if the input is out of bounds or invalid, it's set to 0 and the loop continues, and a message is displayed.
+        if(index == 666) return 666;
         if(index <= 0 || index > materialCount) index = 0;
         // if the material is to expensive, it's set to 0 and the loop continues
         double price = (material[index-1].cost + 1) * currentWeaponCost;
@@ -228,7 +228,6 @@ int chooseMaterial(void){
     return index -1;
 }
 
-//TODO: deduct cost of weapon. Make player rechoose material if they don't have enough cash.
 double craftWeapon(){
     printf("Time to craft the %s!\n",currentWeaponName);
 
@@ -317,17 +316,20 @@ int main(void){
     printf("Smithing skill: %i\n", smithingSkill);
     while(1){
         int customerAccepted = customer();
-        //if the customer was rejected, restart the loop
-        if(!customerAccepted) continue;
-        currentMaterialIndex = chooseMaterial();
-        double weaponValue;
-        weaponValue = craftWeapon();
-        double payment = customerPayment(weaponValue);
-        playerMoney += payment;
-        calculateExperience(weaponValue); 
+        //if the customer was rejected, dont forge the weapon!
+        if(customerAccepted){
+            currentMaterialIndex = chooseMaterial();
+            if(currentMaterialIndex != 666){
+                double weaponValue;
+                weaponValue = craftWeapon();
+                double payment = customerPayment(weaponValue);
+                playerMoney += payment;
+                calculateExperience(weaponValue); 
+            }
+            else printf("\"Fine then!\"\nThe Customer Leaves\n");
 
-        getchar();
-
+            getchar();
+        }
         // Random living expenses, but with a probability curve!
         int livingExpenses = genRandInt(1,5) + genRandInt(1,5);
         printf("You pay your living expenses. -$%i\n", livingExpenses);
@@ -336,11 +338,13 @@ int main(void){
             printf("You are all out of money!\n");
             break;
         }
+        flushInput();
         getchar();
         printf("Player money: %lf\n", playerMoney);
         printf("Smithing skill: %i\n", smithingSkill);
     }
-    //TODO: make the game over thing cool ascii letters
-    printf("G A M E   O V E R\n");
+    // This is the game over screen.
+    printf(" _____   ___  ___  ___ _____   _____  _   _ ___________ \n|  __ \\ / _ \\ |  \\/  ||  ___| |  _  || | | |  ___| ___ \\\n| |  \\// /_\\ \\| .  . || |__   | | | || | | | |__ | |_/ /\n| | __ |  _  || |\\/| ||  __|  | | | || | | |  __||    / \n| |_\\ \\| | | || |  | || |___  \\ \\_/ /\\ \\_/ / |___| |\\ \\ \n \\____/\\_| |_/\\_|  |_/\\____/   \\___/  \\___/\\____/\\_| \\_|\n");                                                       
+                                                        
     return 0;
 }
