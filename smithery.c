@@ -233,6 +233,6 @@ int main(void){
         }
     }
     //TODO: make the game over thing cool ascii letters
-    printf("G A M E   O V E R");
+    printf("G A M E   O V E R\n");
     return 0;
 }
