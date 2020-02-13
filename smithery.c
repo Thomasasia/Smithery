@@ -32,6 +32,13 @@ int materialCount = 0;
 
 static int smithingSkill;
 
+// this is because im sick of the input messing me up
+void flushInput(void){
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);
+
+}
+
 // Generates a random int between the values of lower and upper
 int genRandInt(int lower, int upper){
     int num = (rand() % (upper - lower + 1)) + lower; 
@@ -222,24 +229,23 @@ double craftWeapon(){
     //can't have negative difficulty!
     if(difficulty <= 0) difficulty = 1;
     
-    printf("Difficulty level: %i\n",difficulty);
+    printf("Crafting difficulty level: %i\n",difficulty);
+    printf("Crafting skill level: %i\n", smithingSkill);
+
     //Probability curves are fun.
     int smithRoll = 0.0;
     int difficultyRoll = 0.0;
     
-    printf("Crafting...\n");
     //TODO: Fix getchars
+    flushInput();
     getchar();
-
 
     //Each level is a d20 rolled. The percentage difference determines the quality modifier.
     for(int i = 0; i < smithingSkill; i++){
         smithRoll += genRandInt(1,20);
-        printf("s roll now: %i\n",smithRoll);
     }
     for(int i = 0; i < difficulty; i++){
         difficultyRoll += genRandInt(1,20);
-        printf("d roll now: %i\n",difficultyRoll);
     }
     printf("You roll a %i out of a needed %i.\n", smithRoll, difficultyRoll);
     double dif = (double) smithRoll / difficultyRoll;
@@ -248,11 +254,13 @@ double craftWeapon(){
     if(dif > 2) dif = 2;
 
     //TODO: Add flavor text for how well you did
-    printf("weap cost: %f\ndif: %lf\nvalueMod: %f\n",currentWeaponCost,dif,material[currentMaterialIndex].valueMod);
+    //printf("weap cost: %f\ndif: %lf\nvalueMod: %f\n",currentWeaponCost,dif,material[currentMaterialIndex].valueMod);
     double value = currentWeaponCost * dif * (1 + material[currentMaterialIndex].valueMod);
 
     printf("You crafted a weapon worth %lf!\n", value);
     printf("        (The base value of the weapon is %f.)\n", currentWeaponCost);
+
+    flushInput();
     getchar();
 
     return value;
