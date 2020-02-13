@@ -18,6 +18,7 @@ static float variation;
 static double playerMoney;
 
 static int smithingSkill;
+static double smithingXP;
 
 
 // Sets up the materials to be used
@@ -197,7 +198,7 @@ int customer(void){
 
 double customerPayment(double weaponValue){
     // TODO: add flavor text based on the quality of the weapon.
-    payment =  (variation+1) * weaponValue;
+    double payment = ((variation/100)+1) * weaponValue;
     printf("\"Ah, thank you good Sir! I cannot wait to try out this new %s! Here is %lf for the weapon, plus the %f I promised, leading to a grand total of %lf!\"\n", currentWeaponName, weaponValue, variation, payment);
     return payment;
 
@@ -278,10 +279,15 @@ double craftWeapon(){
     printf("You crafted a weapon worth %lf!\n", value);
     printf("        (The base value of the weapon is %f.)\n", currentWeaponCost);
 
-    flushInput();
     getchar();
 
     return value;
+}
+
+int calculateExperience(double exp){
+    
+
+
 }
 
 int main(void){
@@ -306,18 +312,18 @@ int main(void){
         weaponValue = craftWeapon();
         double payment = customerPayment(weaponValue);
         playerMoney += payment;
-        
+        calculateExperience(weaponValue); 
 
-        flushInput();
         getchar();
 
-        printf("You pay your living expenses. -$10\n");
-        playerMoney -= 10.0;
+        // Random living expenses, but with a probability curve!
+        int livingExpenses = genRandInt(1,5) + genRandInt(1,5);
+        printf("You pay your living expenses. -$%i\n", livingExpenses);
+        playerMoney -= livingExpenses;
         if(playerMoney <= 0){
             printf("You are all out of money!\n");
             break;
         }
-        flushInput();
         getchar();
         printf("Player money: %lf\n", playerMoney);
         printf("Smithing skill: %i\n", smithingSkill);
