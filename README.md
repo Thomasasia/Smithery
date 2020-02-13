@@ -1,4 +1,6 @@
 # Smithery
-A small game made in C
+A small game made in C about smithing medieval weapons.
 
-Not currently complete, I'll probably work on this later
+## Installation
+Should work on just about anything. Comiple with >gcc -o smithery smithery.c -lm
+
